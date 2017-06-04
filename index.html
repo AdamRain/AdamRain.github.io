@@ -264,6 +264,152 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/xiangguan/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Adam Rain">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AdamRain的心路历程">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/03/xiangguan/" itemprop="url">相关分析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-03T00:00:00+08:00">
+                2017-06-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据挖掘笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">数据挖掘笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><font color="#0099ff" size="5" face="黑体">冗</font>余可以被<strong>相关分析</strong>检测到。给定两个属性，这种分析可以根据可用的数据，度量一个属性能在多大程度上蕴涵另一个。对于标称数据，使用$\chi ^2$检验；对于数值数据，使用相关系数和协方差。</p>
+<h3 id="1-标称数据的-chi-2-检验"><a href="#1-标称数据的-chi-2-检验" class="headerlink" title="1.标称数据的$\chi ^2$检验"></a>1.标称数据的$\chi ^2$检验</h3><p>假设两个属性A和B，A有c个不同值$a_1,a_2,\cdots,a_c$，B有r个不同值$b_1,b_2,\cdots,b_r$。令（$A_i,B_j$）表示属性A取$a_i$、属性B取$b_j$的联合事件。每个可能的（$A_i,B_j$）联合事件都在表中有自己的单元。则，$\chi ^2$值（又称<em>Persion</em>$\chi ^2$统计量）可以用下面的公式计算：</p>
+<script type="math/tex; mode=display">\chi ^2=\sum_{i=1}^c{\sum_{j=1}^r{\frac{\left( o_{ij}-e_{ij} \right) ^2}{e_{ij}}}}</script><p>其中，$o_{ij}$是联合事件$\left(A_i,B_j\right)$的观测频度（即实际计数），而$e_{ij}$是$\left(A_i,B_j\right)$的期望频度，其计算公式为：</p>
+<script type="math/tex; mode=display">e_{ij}=\frac{count\left( A=a_i \right) \times count\left( B=b_j \right)}{n}</script><p>其中，<em>n</em>是数据元组的个数$count\left( A=a_i \right)$是<em>A</em>上具有$a_i$的元组个数。<br>$\chi ^2$统计检验假设A和B是独立的。检验基于显著水平，具有自由度$\left(r-1\right)\times\left(c-1\right)$。<br>通过对比计算得到的$\chi ^2$值与通过查询自由度对应置信水平下的$\chi ^2$拒绝假设值，若计算出的结果大于查询到的值，则说明属性A和B是强相关的，拒绝属性独立假设。</p>
+<h3 id="2-数值数据的相关系数"><a href="#2-数值数据的相关系数" class="headerlink" title="2.数值数据的相关系数"></a>2.数值数据的相关系数</h3><p>计算属性A和B的<strong>相关系数</strong>（又称<strong>Pearson积矩系数</strong>）的公式为：<script type="math/tex">r_{A,B}=\frac{\sum_{i=1}^n{\left( a_i-\bar{A} \right) \left( b_i-\bar{B} \right)}}{n\sigma _A\sigma _B}=\frac{\sum_{i=1}^n{\left( a_ib_i \right) -n\overline{A}\overline{B}}}{n\sigma _A\sigma _B}</script><br>其中，n是元组的个数，$a_i$和$b_i$分别是元组<em>i</em>在A和B上的值，$\overline{A}$和$\overline{B}$分别是<em>A</em>和<em>B</em>的均值，$\sigma _A$和$\sigma _B$分别是<em>A</em>和<em>B</em>的标准差，而$\sum{\left( a_ib_i \right)}$是<em>AB</em>叉积和（即对于每一个元组，A的值乘以该元组B的值）。</p>
+<blockquote>
+<p>如果$r_{A,B}$大于0，则A,B是正相关的。一个较高的$r_{A,B}$值表明A或B可以作为冗余而被删除。<br>如果$r_{A,B}$等于0，则A,B是独立的，并且它们之间不存在相关性。<br>如果$r_{A,B}$小于0，则A,B的负相关的。表示每一个属性都阻止另一个出现。</p>
+</blockquote>
+<h3 id="3-数值数据的协方差"><a href="#3-数值数据的协方差" class="headerlink" title="3.数值数据的协方差"></a>3.数值数据的协方差</h3><p>考虑两个数值属性A、B和n次观察的集合{($a_1$,$b_1$),$\cdots$,($a_n$,$b_n$)}。A和B的均值又分别称为A和B的期望值，即$E\left( A \right) =\bar{A}=\frac{\sum_{i=1}^n{a_i}}{n}$,$E\left( B \right) =\overline{B}=\frac{\sum_{i=1}^n{b_i}}{n}$,A和B的协方差定义为：</p>
+<script type="math/tex; mode=display">Cov\left( A,B \right) =E\left( \left( A-\overline{A} \right) \left( B-\overline{B} \right) \right) =\frac{\sum_{i=1}^n{\left( a_i-\overline{A} \right) \left( b_i-\overline{B} \right)}}{n}</script><script type="math/tex; mode=display">r_{A,B}=\frac{Cov\left( A,B \right)}{\sigma _A\sigma _B}</script><p>其中$\sigma _A$和$\sigma _B$分别是A和B的标准差。$Cov\left( A,B \right)=E\left(A\cdot B\right)-\overline{A} \overline{B}$</p>
+<blockquote>
+<p>如果协方差为正，则属性A和B拥有相同的变化趋势<br>如果协方差为负，则属性A和B拥有相反的变化趋势<br>如果协方差为0，则A和B是独立的或存在某种附加条件可以使协方差为0.</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/basic description/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -380,152 +526,6 @@
 <li><h2 id="3-3-余弦相似性"><a href="#3-3-余弦相似性" class="headerlink" title="3.3 余弦相似性"></a>3.3 余弦相似性</h2><p>两个n维样本点$a\left( x_{11},x_{12},\cdots ,x_{1n} \right)$和$b\left( x_{21},x_{22},\cdots ,x_{2n} \right)$的夹角余弦为：</p>
 <script type="math/tex; mode=display">\cos \left( \theta \right) =\frac{a\cdot b}{\left| a \right|\left| b \right|}=\frac{\sum{}x_{1k}x_{2k}}{\sqrt{\sum{}x_{1k}^2}\sqrt{\sum{}x_{2k}^2}}</script></li>
 </ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/xiangguan/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Adam Rain">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="AdamRain的心路历程">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/03/xiangguan/" itemprop="url">相关分析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-03T00:00:00+08:00">
-                2017-06-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/数据挖掘笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">数据挖掘笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><font color="#0099ff" size="5" face="黑体">冗</font>余可以被<strong>相关分析</strong>检测到。给定两个属性，这种分析可以根据可用的数据，度量一个属性能在多大程度上蕴涵另一个。对于标称数据，使用$\chi ^2$检验；对于数值数据，使用相关系数和协方差。</p>
-<h3 id="1-标称数据的-chi-2-检验"><a href="#1-标称数据的-chi-2-检验" class="headerlink" title="1.标称数据的$\chi ^2$检验"></a>1.标称数据的$\chi ^2$检验</h3><p>假设两个属性A和B，A有c个不同值$a_1,a_2,\cdots,a_c$，B有r个不同值$b_1,b_2,\cdots,b_r$。令（$A_i,B_j$）表示属性A取$a_i$、属性B取$b_j$的联合事件。每个可能的（$A_i,B_j$）联合事件都在表中有自己的单元。则，$\chi ^2$值（又称<em>Persion</em>$\chi ^2$统计量）可以用下面的公式计算：</p>
-<script type="math/tex; mode=display">\chi ^2=\sum_{i=1}^c{\sum_{j=1}^r{\frac{\left( o_{ij}-e_{ij} \right) ^2}{e_{ij}}}}</script><p>其中，$o_{ij}$是联合事件$\left(A_i,B_j\right)$的观测频度（即实际计数），而$e_{ij}$是$\left(A_i,B_j\right)$的期望频度，其计算公式为：</p>
-<script type="math/tex; mode=display">e_{ij}=\frac{count\left( A=a_i \right) \times count\left( B=b_j \right)}{n}</script><p>其中，<em>n</em>是数据元组的个数$count\left( A=a_i \right)$是<em>A</em>上具有$a_i$的元组个数。<br>$\chi ^2$统计检验假设A和B是独立的。检验基于显著水平，具有自由度$\left(r-1\right)\times\left(c-1\right)$。<br>通过对比计算得到的$\chi ^2$值与通过查询自由度对应置信水平下的$\chi ^2$拒绝假设值，若计算出的结果大于查询到的值，则说明属性A和B是强相关的，拒绝属性独立假设。</p>
-<h3 id="2-数值数据的相关系数"><a href="#2-数值数据的相关系数" class="headerlink" title="2.数值数据的相关系数"></a>2.数值数据的相关系数</h3><p>计算属性A和B的<strong>相关系数</strong>（又称<strong>Pearson积矩系数</strong>）的公式为：<script type="math/tex">r_{A,B}=\frac{\sum_{i=1}^n{\left( a_i-\bar{A} \right) \left( b_i-\bar{B} \right)}}{n\sigma _A\sigma _B}=\frac{\sum_{i=1}^n{\left( a_ib_i \right) -n\overline{A}\overline{B}}}{n\sigma _A\sigma _B}</script><br>其中，n是元组的个数，$a_i$和$b_i$分别是元组<em>i</em>在A和B上的值，$\overline{A}$和$\overline{B}$分别是<em>A</em>和<em>B</em>的均值，$\sigma _A$和$\sigma _B$分别是<em>A</em>和<em>B</em>的标准差，而$\sum{\left( a_ib_i \right)}$是<em>AB</em>叉积和（即对于每一个元组，A的值乘以该元组B的值）。</p>
-<blockquote>
-<p>如果$r_{A,B}$大于0，则A,B是正相关的。一个较高的$r_{A,B}$值表明A或B可以作为冗余而被删除。<br>如果$r_{A,B}$等于0，则A,B是独立的，并且它们之间不存在相关性。<br>如果$r_{A,B}$小于0，则A,B的负相关的。表示每一个属性都阻止另一个出现。</p>
-</blockquote>
-<h3 id="3-数值数据的协方差"><a href="#3-数值数据的协方差" class="headerlink" title="3.数值数据的协方差"></a>3.数值数据的协方差</h3><p>考虑两个数值属性A、B和n次观察的集合{($a_1$,$b_1$),$\cdots$,($a_n$,$b_n$)}。A和B的均值又分别称为A和B的期望值，即$E\left( A \right) =\bar{A}=\frac{\sum_{i=1}^n{a_i}}{n}$,$E\left( B \right) =\overline{B}=\frac{\sum_{i=1}^n{b_i}}{n}$,A和B的协方差定义为：</p>
-<script type="math/tex; mode=display">Cov\left( A,B \right) =E\left( \left( A-\overline{A} \right) \left( B-\overline{B} \right) \right) =\frac{\sum_{i=1}^n{\left( a_i-\overline{A} \right) \left( b_i-\overline{B} \right)}}{n}</script><script type="math/tex; mode=display">r_{A,B}=\frac{Cov\left( A,B \right)}{\sigma _A\sigma _B}</script><p>其中$\sigma _A$和$\sigma _B$分别是A和B的标准差。$Cov\left( A,B \right)=E\left(A\cdot B\right)-\overline{A} \overline{B}$</p>
-<blockquote>
-<p>如果协方差为正，则属性A和B拥有相同的变化趋势<br>如果协方差为负，则属性A和B拥有相反的变化趋势<br>如果协方差为0，则A和B是独立的或存在某种附加条件可以使协方差为0.</p>
-</blockquote>
 
           
         
