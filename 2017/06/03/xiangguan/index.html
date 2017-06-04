@@ -100,17 +100,17 @@
 
 
 
-<meta name="description" content="冗余可以被相关分析检测到。给定两个属性，这种分析可以根据可用的数据，度量一个属性能在多大程度上蕴涵另一个。对于标称数据，使用$\chi ^2$检验；对于数值数据，使用相关系数和协方差。 1.标称数据的$\chi ^2$检验假设两个属性A和B，A有c个不同值$a_1,a_2,\cdots,a_c$，B有r个不同值$b_1,b_2,\cdots,b_r$。令（$A_i,B_j$）表示属性A取$a_i$">
+<meta name="description" content="冗余可以被相关分析检测到。给定两个属性，这种分析可以根据可用的数据，度量一个属性能在多大程度上蕴涵另一个。对于标称数据，使用$\chi ^2$检验；对于数值数据，使用相关系数和协方差。">
 <meta name="keywords" content="数据挖掘">
 <meta property="og:type" content="article">
 <meta property="og:title" content="相关分析">
 <meta property="og:url" content="http://yoursite.com/2017/06/03/xiangguan/index.html">
 <meta property="og:site_name" content="AdamRain的心路历程">
-<meta property="og:description" content="冗余可以被相关分析检测到。给定两个属性，这种分析可以根据可用的数据，度量一个属性能在多大程度上蕴涵另一个。对于标称数据，使用$\chi ^2$检验；对于数值数据，使用相关系数和协方差。 1.标称数据的$\chi ^2$检验假设两个属性A和B，A有c个不同值$a_1,a_2,\cdots,a_c$，B有r个不同值$b_1,b_2,\cdots,b_r$。令（$A_i,B_j$）表示属性A取$a_i$">
+<meta property="og:description" content="冗余可以被相关分析检测到。给定两个属性，这种分析可以根据可用的数据，度量一个属性能在多大程度上蕴涵另一个。对于标称数据，使用$\chi ^2$检验；对于数值数据，使用相关系数和协方差。">
 <meta property="og:updated_time" content="2017-06-02T16:00:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="相关分析">
-<meta name="twitter:description" content="冗余可以被相关分析检测到。给定两个属性，这种分析可以根据可用的数据，度量一个属性能在多大程度上蕴涵另一个。对于标称数据，使用$\chi ^2$检验；对于数值数据，使用相关系数和协方差。 1.标称数据的$\chi ^2$检验假设两个属性A和B，A有c个不同值$a_1,a_2,\cdots,a_c$，B有r个不同值$b_1,b_2,\cdots,b_r$。令（$A_i,B_j$）表示属性A取$a_i$">
+<meta name="twitter:description" content="冗余可以被相关分析检测到。给定两个属性，这种分析可以根据可用的数据，度量一个属性能在多大程度上蕴涵另一个。对于标称数据，使用$\chi ^2$检验；对于数值数据，使用相关系数和协方差。">
 
 
 
@@ -356,6 +356,7 @@
 
       
         <p><font color="#0099ff" size="5" face="黑体">冗</font>余可以被<strong>相关分析</strong>检测到。给定两个属性，这种分析可以根据可用的数据，度量一个属性能在多大程度上蕴涵另一个。对于标称数据，使用$\chi ^2$检验；对于数值数据，使用相关系数和协方差。</p>
+<a id="more"></a>
 <h3 id="1-标称数据的-chi-2-检验"><a href="#1-标称数据的-chi-2-检验" class="headerlink" title="1.标称数据的$\chi ^2$检验"></a>1.标称数据的$\chi ^2$检验</h3><p>假设两个属性A和B，A有c个不同值$a_1,a_2,\cdots,a_c$，B有r个不同值$b_1,b_2,\cdots,b_r$。令（$A_i,B_j$）表示属性A取$a_i$、属性B取$b_j$的联合事件。每个可能的（$A_i,B_j$）联合事件都在表中有自己的单元。则，$\chi ^2$值（又称<em>Persion</em>$\chi ^2$统计量）可以用下面的公式计算：</p>
 <script type="math/tex; mode=display">\chi ^2=\sum_{i=1}^c{\sum_{j=1}^r{\frac{\left( o_{ij}-e_{ij} \right) ^2}{e_{ij}}}}</script><p>其中，$o_{ij}$是联合事件$\left(A_i,B_j\right)$的观测频度（即实际计数），而$e_{ij}$是$\left(A_i,B_j\right)$的期望频度，其计算公式为：</p>
 <script type="math/tex; mode=display">e_{ij}=\frac{count\left( A=a_i \right) \times count\left( B=b_j \right)}{n}</script><p>其中，<em>n</em>是数据元组的个数$count\left( A=a_i \right)$是<em>A</em>上具有$a_i$的元组个数。<br>$\chi ^2$统计检验假设A和B是独立的。检验基于显著水平，具有自由度$\left(r-1\right)\times\left(c-1\right)$。<br>通过对比计算得到的$\chi ^2$值与通过查询自由度对应置信水平下的$\chi ^2$拒绝假设值，若计算出的结果大于查询到的值，则说明属性A和B是强相关的，拒绝属性独立假设。</p>
