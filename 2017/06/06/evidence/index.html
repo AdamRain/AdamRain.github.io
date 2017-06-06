@@ -108,7 +108,7 @@
 <meta property="og:site_name" content="AdamRain的心路历程">
 <meta property="og:description" content="摘要&amp;#160; &amp;#160; &amp;#160; &amp;#160;普通用户对于投票、打分的行为非常不积极，因此传统的基于用户打分的推荐算法效果不好。发现用户对每一个项目的停留时间（dwell time）可以一定程度上反应出用户对于这个项目的评分。因此使用经过转化的用户停留时间作为一种“伪投票（pseudo votes）”来扩充用户评分矩阵，来帮助改善推荐效率。但是由于存在很多主观的人为因素导致获取准确的停">
 <meta property="og:image" content="http://yoursite.com/uploads/8b67ff70-1f20-4e7b-b3e3-e6f368e553e8.png">
-<meta property="og:updated_time" content="2017-06-06T13:02:02.714Z">
+<meta property="og:updated_time" content="2017-06-06T13:12:08.838Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【论文研读】Silence is Also Evidence:Interpreting Dwell Time for Recommendation from Psychological Perspective">
 <meta name="twitter:description" content="摘要&amp;#160; &amp;#160; &amp;#160; &amp;#160;普通用户对于投票、打分的行为非常不积极，因此传统的基于用户打分的推荐算法效果不好。发现用户对每一个项目的停留时间（dwell time）可以一定程度上反应出用户对于这个项目的评分。因此使用经过转化的用户停留时间作为一种“伪投票（pseudo votes）”来扩充用户评分矩阵，来帮助改善推荐效率。但是由于存在很多主观的人为因素导致获取准确的停">
@@ -472,14 +472,14 @@
 <tr><td>$\lambda $</td><td>拉格朗日乘子 </td></tr>
 </table>
 </td></tr>
-<tr><td>
+<tr><th colspan="2">
 一个带有约束：$\sum{\pi_i=1}$的损失函数可以定义为：
 $$\mathfrak{L}\left( \theta ;Q,L,V,T,B \right) =\log P\left( V,T,B|Q,L,\theta \right) +\lambda \left( \sum_{i=1}^k{\pi_i}-1 \right)$$
 $$=\sum_{i=1}^n{\sum_{j=1}^k{\tau_{ij}}}\log P\left( v_i,t_i,b_j|q_i,l_i,\theta \right) +\lambda \left( \sum_{i=1}^k{\pi_i-1} \right)$$
 $$=\sum_{i=1}^n{\sum_{j=1}^k{\tau_{ij}}}\left( \log P\left( v_i|q_i,\theta_j \right) +\log P\left( t_i|l_i,q_i,\theta_j \right) +\log \pi_j \right) +\lambda \left( \sum_{i=1}^k{\pi_i-1} \right)$$
 其中$\tau_{ij} $是一个判断函数，其定义为：
 $$\tau_{ij}=\left\{\begin{array}{l}1;\ if\ LAB\ b_j\ is\ selected\ for\ item\ i\\0;\ otherwise\\\end{array} \right.$$
-</td><td></td></tr>
+</th></tr>
 </table>
 
 <p>EM算法迭代部分略。</p>
@@ -535,8 +535,8 @@ $$\tau_{ij}=\left\{\begin{array}{l}1;\ if\ LAB\ b_j\ is\ selected\ for\ item\ i\
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/06/03/basic description/" rel="next" title="数据的基本统计描述">
-                <i class="fa fa-chevron-left"></i> 数据的基本统计描述
+              <a href="/2017/06/03/xiangguan/" rel="next" title="相关分析">
+                <i class="fa fa-chevron-left"></i> 相关分析
               </a>
             
           </div>
