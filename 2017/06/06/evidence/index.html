@@ -1,0 +1,900 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="推荐系统," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="摘要&amp;#160; &amp;#160; &amp;#160; &amp;#160;普通用户对于投票、打分的行为非常不积极，因此传统的基于用户打分的推荐算法效果不好。发现用户对每一个项目的停留时间（dwell time）可以一定程度上反应出用户对于这个项目的评分。因此使用经过转化的用户停留时间作为一种“伪投票（pseudo votes）”来扩充用户评分矩阵，来帮助改善推荐效率。但是由于存在很多主观的人为因素导致获取准确的停">
+<meta name="keywords" content="推荐系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【论文研读】Silence is Also Evidence:Interpreting Dwell Time for Recommendation from Psychological Perspective">
+<meta property="og:url" content="http://yoursite.com/2017/06/06/evidence/index.html">
+<meta property="og:site_name" content="AdamRain的心路历程">
+<meta property="og:description" content="摘要&amp;#160; &amp;#160; &amp;#160; &amp;#160;普通用户对于投票、打分的行为非常不积极，因此传统的基于用户打分的推荐算法效果不好。发现用户对每一个项目的停留时间（dwell time）可以一定程度上反应出用户对于这个项目的评分。因此使用经过转化的用户停留时间作为一种“伪投票（pseudo votes）”来扩充用户评分矩阵，来帮助改善推荐效率。但是由于存在很多主观的人为因素导致获取准确的停">
+<meta property="og:image" content="http://yoursite.com/uploads/8b67ff70-1f20-4e7b-b3e3-e6f368e553e8.png">
+<meta property="og:updated_time" content="2017-06-06T13:02:02.714Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【论文研读】Silence is Also Evidence:Interpreting Dwell Time for Recommendation from Psychological Perspective">
+<meta name="twitter:description" content="摘要&amp;#160; &amp;#160; &amp;#160; &amp;#160;普通用户对于投票、打分的行为非常不积极，因此传统的基于用户打分的推荐算法效果不好。发现用户对每一个项目的停留时间（dwell time）可以一定程度上反应出用户对于这个项目的评分。因此使用经过转化的用户停留时间作为一种“伪投票（pseudo votes）”来扩充用户评分矩阵，来帮助改善推荐效率。但是由于存在很多主观的人为因素导致获取准确的停">
+<meta name="twitter:image" content="http://yoursite.com/uploads/8b67ff70-1f20-4e7b-b3e3-e6f368e553e8.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/06/evidence/"/>
+
+
+
+
+
+  <title>【论文研读】Silence is Also Evidence:Interpreting Dwell Time for Recommendation from Psychological Perspective | AdamRain的心路历程</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AdamRain的心路历程</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">苦逼博士僧</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/06/evidence/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Adam Rain">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AdamRain的心路历程">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【论文研读】Silence is Also Evidence:Interpreting Dwell Time for Recommendation from Psychological Perspective</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-06T20:11:21+08:00">
+                2017-06-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/论文研读笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">论文研读笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p>&#160; &#160; &#160; &#160;普通用户对于投票、打分的行为非常不积极，因此传统的基于用户打分的推荐算法效果不好。发现用户对每一个项目的停留时间（dwell time）可以一定程度上反应出用户对于这个项目的评分。因此使用经过转化的用户停留时间作为一种“伪投票（pseudo votes）”来扩充用户评分矩阵，来帮助改善推荐效率。但是由于存在很多主观的人为因素导致获取准确的停留时间很困难，比如：用户期望、用户对于不同产品质量的敏感程度、阅读速度等不同种类的在线阅读的行为的影响。在心理学中，普遍认为在下决定时候存在一个阈值：在下决定时候花费的时间反应了这个阈值。这个想法激励了我们研究出一个基于观点的评分模型（View-Voting model），能够根据停留时间估计用户有多喜欢目前所游览的项目。<br><a id="more"></a></p>
+<h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><p>&#160; &#160; &#160; &#160;虽然提出了很多在一定程度上解决、减缓稀疏矩阵的方法，他们依赖用户明确的观点来做推荐。但不幸的是，用户往往保持安静而不是采取投票行为。我们称其为“沉默的浏览行为（silent viewing behavior）”，因此我们决定利用这点做推荐。</p>
+<p>停留时间反应了信息积累的过程。通常，文章越短，停留时间越短，但是，这样的模型并不能代表普遍现象，还受到以下因素干扰：</p>
+<blockquote>
+<ul>
+<li>现实使用中，用户的游览行为非常随意，用户可以随时停止阅读行为，而不会产生反馈</li>
+<li>受阅读文章的文本质量影响、还与用户的个人阅读质量有关，有的用户非常挑剔，只在满足其需求的目标上消耗时间，所有这些项目的因素和人员的因素共同确定一个人在某项的停留时间。</li>
+<li>在两个可选强迫选择实验中，观察到停留时间和答案准确率有正相关性。但是都是基于研究人员给定的行为-反馈规则上，现实生活则不存在这样的规则约束。</li>
+</ul>
+</blockquote>
+<p>本文提出了一个游览投票模型，用来同时捕捉默读和隐式反馈投票行为，并解释项目停留时间其隐藏在背后的原因。我们假设每一个项目都有一个质量得分，每一个人都有多种潜在的动作行为范围，这些范围决定了项目能够激发用户游览和投票行为的期望水平。<br>三种LABs情况：</p>
+<ul>
+<li>如果阅读时间很短，说明文章不好</li>
+<li>如果质量刚到达到条件边界，则停留时间也应该接近完整读完文章</li>
+<li>如果文章质量好于预期，则停留时间会显著变长</li>
+</ul>
+<p>文章的贡献主要体现在：</p>
+<ul>
+<li>通过挖掘用户停留时间解决用户投票的随意性和投票矩阵的稀疏性问题</li>
+<li>提出一种游览-投票模型用于解释用户的默读游览行为</li>
+</ul>
+<h3 id="游览-投票模型"><a href="#游览-投票模型" class="headerlink" title="游览-投票模型"></a>游览-投票模型</h3><h4 id="1-符号说明："><a href="#1-符号说明：" class="headerlink" title="1. 符号说明："></a>1. 符号说明：</h4><center><table><tr><td>
+<table>
+<tr><th>Symbol</th><th>Meaning</th>
+</tr><tr><td>$u$</td><td>the user</td></tr>
+<tr><td>$b$ </td><td>latent action bound (LAB)  </td></tr>
+<tr><td>$\pi$</td><td>reading speed</td></tr>
+<tr><td>$\alpha$</td><td>quality sensitivity</td></tr>
+<tr><td>$v$</td><td> vote</td></tr>
+<tr><td>$t$</td><td>dwell time</td></tr>
+<tr><td>$q$</td><td>the item quality </td></tr>
+<tr><td>$l$</td><td>the item length</td></tr>
+<tr><td>$p$</td><td>伯努利方程参数</td></tr>
+</table>
+</td>
+<td>
+<center><img src="/uploads/8b67ff70-1f20-4e7b-b3e3-e6f368e553e8.png">
+<center></center></center></td></tr></table></center>
+
+
+<h4 id="2-投票行为的模型建立"><a href="#2-投票行为的模型建立" class="headerlink" title="2. 投票行为的模型建立"></a>2. 投票行为的模型建立</h4><p>$p$由Beta公式计算，Beta分布$Be\left(q,b\right)$</p>
+<script type="math/tex; mode=display">Be\left( p;q,b \right) =\frac{\varGamma \left( q+b \right)}{\varGamma \left( q \right) \varGamma \left( b \right)}p^{q-1}\left( 1-p \right) ^{b-1}=\frac{p^{q-1}\left( 1-p \right) ^{b-1}}{B\left( q,b \right)}</script><p>q是项目质量，b是用户的LAB。</p>
+<blockquote>
+<ul>
+<li>当$q&gt;n\geqslant 1$时，p的值会很大，说明当项目的质量q要大于用户的LAB b时，用户会更倾向于给予一个正向的投票。</li>
+<li>当$1\le q&lt;b$时，生成的p值会更接近0，此时用户会更倾向于简单看看不作反馈。</li>
+</ul>
+</blockquote>
+<p>对于给定的一个项目，其质量为q，则投票的概率为：</p>
+<script type="math/tex; mode=display">P\left( v=1|b,q \right) =\int_0^1{P\left( v=1,p|b,q \right) dp=\int_0^1{p\cdot Be\left( p;q,b \right) dp=\frac{q}{q+b}}}</script><p>对于没有投票（v=0），其概率为：</p>
+<script type="math/tex; mode=display">P\left( v=0|b,q \right) =1-P\left( v=1|b,q \right) =1-\frac{q}{q+b}=\frac{b}{q+b}</script><p>于是整理上述俩公司，投票行为概率模型为：</p>
+<script type="math/tex; mode=display">P\left( v|b,q \right) =\frac{\left( 1-v \right) \cdot b+v\cdot q}{q+b}</script><h3 id="停留时间模型建立"><a href="#停留时间模型建立" class="headerlink" title="停留时间模型建立"></a>停留时间模型建立</h3><p>对于不同的文档质量q和用户的LAB值p，分别对下面三种情况分别进行计算：</p>
+<blockquote>
+<ul>
+<li>$b&gt;q$.</li>
+<li>$b\approx q$. 文档的质量非常接近用户的LAB值，因此会导致用户犹豫是否要投票，用户也许会继续把文档读完。</li>
+<li>$b&lt;q$.</li>
+</ul>
+</blockquote>
+<p>设使用高斯分布来建立用户停留时间模型，文章长度为$l$，质量为$q$，用户LAB为$b$，阅读速度$r$，对质量的敏感度为$\alpha$，则用户可能的停留时间$t$的计算公式为</p>
+<script type="math/tex; mode=display">P\left( t|l,q,b,r,\alpha \right) =\mathcal{N}\left( \log \textrm{t};\mu \left( r,l,\alpha ,q,b \right) ,\sigma ^2 \right) =\frac{1}{\sqrt{2\pi \sigma ^2}}\cdot e^{-\frac{\left( \log t\ -\mu \right) ^2}{2\sigma ^2}}</script><script type="math/tex; mode=display">where\ \mu \left( r,l,\alpha ,q,b \right) =\log \left( \frac{1}{r} \right) +\alpha \left( q-b \right)</script><p>如果$q&gt;b$，则平均停留时间会增加，反之亦然。α敏感度决定了时间增长衰减比例,人与人是不同的。一个较大的$\alpha$值表示这个人是个“挑剔的”人。较小的$\alpha$值表示这个人更能“忍受”，他的停留时间不会因文档质量的不同而出现明显差异。</p>
+<h3 id="模型学习过程"><a href="#模型学习过程" class="headerlink" title="模型学习过程"></a>模型学习过程</h3><p>用到的符号说明如下：</p>
+<table><tr><td>
+<table>
+<tr><th>Symbol</th><th>Meaning</th>
+</tr><tr><td>$\pi_i （1\le i\le k）$</td><td>LAB参数</td></tr>
+<tr><td>$b_i$ </td><td>LABs的序列  </td></tr>
+<tr><td>$r$</td><td>阅读速度参数</td></tr>
+<tr><td>$\alpha$</td><td>对文章质量的敏感度</td></tr>
+<tr><td>$\sigma^2$</td><td>dwell time的方差</td></tr>
+<tr><td>$\theta $</td><td>表示以上所有参数</td></tr>
+<tr><td>$v \in \left\{ 0,1 \right\}$</td><td> vote分数</td></tr>
+<tr><td>$t$</td><td>dwell time</td></tr>
+</table>
+</td>
+<td>
+<table>
+<tr><th>Symbol</th><th>Meaning</th>
+</tr><tr><td>$q$</td><td>文章质量</td></tr>
+<tr><td>$l$</td><td>文章长度</td></tr>
+<tr><td>$Q=${$q_1,\cdots ,q_n$}<br> $L=${$l_1,\cdots ,l_n$}</td><td>表示当$V=${$v_1,\cdots v_n$}$，T=${$t_1,\cdots ,t_n$}分别代表对应评分和停留时间时的用户访问项</td></tr>
+<tr><td>$B$</td><td>未发现的能够影响用户阅读行为的LABs</td></tr>
+<tr><td>$\lambda $</td><td>拉格朗日乘子 </td></tr>
+</table>
+</td></tr>
+<tr><td>
+一个带有约束：$\sum{\pi_i=1}$的损失函数可以定义为：
+$$\mathfrak{L}\left( \theta ;Q,L,V,T,B \right) =\log P\left( V,T,B|Q,L,\theta \right) +\lambda \left( \sum_{i=1}^k{\pi_i}-1 \right)$$
+$$=\sum_{i=1}^n{\sum_{j=1}^k{\tau_{ij}}}\log P\left( v_i,t_i,b_j|q_i,l_i,\theta \right) +\lambda \left( \sum_{i=1}^k{\pi_i-1} \right)$$
+$$=\sum_{i=1}^n{\sum_{j=1}^k{\tau_{ij}}}\left( \log P\left( v_i|q_i,\theta_j \right) +\log P\left( t_i|l_i,q_i,\theta_j \right) +\log \pi_j \right) +\lambda \left( \sum_{i=1}^k{\pi_i-1} \right)$$
+其中$\tau_{ij} $是一个判断函数，其定义为：
+$$\tau_{ij}=\left\{\begin{array}{l}1;\ if\ LAB\ b_j\ is\ selected\ for\ item\ i\\0;\ otherwise\\\end{array} \right.$$
+</td><td></td></tr>
+</table>
+
+<p>EM算法迭代部分略。</p>
+<h3 id="推荐过程"><a href="#推荐过程" class="headerlink" title="推荐过程"></a>推荐过程</h3><p>第一阶段，得到一个用户对于一个文档的停留时间，模型用来找到最能表达他的游览行为的LAB值。第二阶段，即投票预测，会计算出他有多大概率会对文档进行投票。这些“伪投票”会被用来填充用户-投票稀疏矩阵。最后一个阶段，根据用户评分用协同过滤算法对用户进行推荐。</p>
+<ul>
+<li><blockquote>
+<p>设某文档o，让$q^o$和$l^o$分别表示其质量和长度，假设第$i^{th}$个用户对该项目的停留时间为$t_i^o$，则</p>
+<script type="math/tex; mode=display">u_i=\left\{ \left< \pi_{i_j},b_{i_j},\sigma_i,r_i,\alpha_i \right> |1\le j\le k \right\}</script><p>代表第$i^{th}$个用户的描述。通过估计LAB值$b_{i_o}^{*}$来生成观测停留时间，用下面的公式：</p>
+<script type="math/tex; mode=display">b_{i_o}^{*}=argmax_{b_{i_j}}P\left( t_{i}^{o}|\pi_{i_j},b_{i_j},\sigma _i,r_i,\alpha _i \right)</script><script type="math/tex; mode=display">=argmax_{b_{i_j}}\pi _{i_j}\mathcal{N}\left( \log t_{i}^{o};\mu \left( r_i,l^o,\alpha ,q^o,b_{i_j} \right) ,\sigma _{i}^{2} \right)</script></blockquote>
+</li>
+</ul>
+<p>第二阶段，当估计了一个合适的LAB的$b_{i_o}^{*}$值，就可以用它估计用户$u_i$对于那一项的评分。by：</p>
+<script type="math/tex; mode=display">E\left( v_{i}^{o}|q^o,b_{i_o}^{*} \right) =1\cdot\frac{q^o}{q^o+b_{i_o}^{*}}+0\cdot\frac{b_{i_o}^{*}}{q^o+b_{i_o}^{*}}=\frac{q^o}{q^o+b_{i_o}^{*}}</script><p>第三阶段，填充稀疏矩阵。<br>第四阶段，用正常的推荐方法进行推荐。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/推荐系统/" rel="tag"># 推荐系统</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/03/basic description/" rel="next" title="数据的基本统计描述">
+                <i class="fa fa-chevron-left"></i> 数据的基本统计描述
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Adam Rain" />
+          <p class="site-author-name" itemprop="name">Adam Rain</p>
+           
+              <p class="site-description motion-element" itemprop="description">记录生活科研日常</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#摘要"><span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#背景介绍"><span class="nav-text">背景介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#游览-投票模型"><span class="nav-text">游览-投票模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-符号说明："><span class="nav-text">1. 符号说明：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-投票行为的模型建立"><span class="nav-text">2. 投票行为的模型建立</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#停留时间模型建立"><span class="nav-text">停留时间模型建立</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型学习过程"><span class="nav-text">模型学习过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#推荐过程"><span class="nav-text">推荐过程</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Adam Rain</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
