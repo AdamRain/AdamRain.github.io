@@ -1,0 +1,886 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="时间序列," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="摘要&amp;emsp;&amp;emsp;处理可变长度的连续数据是广泛应用中的主要挑战，例如语音识别，语言建模，生成图像建模和机器翻译。在这里，我们通过提出一种新颖的递归神经网络（RNN）架构Fast-Slow RNN（FS-RNN）来解决这个挑战。 FS-RNN结合了多尺度RNN和深度转换RNN的优势，因为它处理不同时间尺度的连续数据，并从一个时间步到下一个时间步学习复杂的转换函数。我们在两个字符级别的语言建">
+<meta name="keywords" content="时间序列">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【论文研读】Fast-Slow Recurrent Neural Network">
+<meta property="og:url" content="http://yoursite.com/2018/06/29/Fast-Slow Recurrent Neural Network/index.html">
+<meta property="og:site_name" content="AdamRain的心路历程">
+<meta property="og:description" content="摘要&amp;emsp;&amp;emsp;处理可变长度的连续数据是广泛应用中的主要挑战，例如语音识别，语言建模，生成图像建模和机器翻译。在这里，我们通过提出一种新颖的递归神经网络（RNN）架构Fast-Slow RNN（FS-RNN）来解决这个挑战。 FS-RNN结合了多尺度RNN和深度转换RNN的优势，因为它处理不同时间尺度的连续数据，并从一个时间步到下一个时间步学习复杂的转换函数。我们在两个字符级别的语言建">
+<meta property="og:image" content="http://yoursite.com/uploads/Fast-Slow%20Recurrent%20Neural%20Network_files/49664996.png">
+<meta property="og:image" content="http://yoursite.com/uploads/Fast-Slow%20Recurrent%20Neural%20Network_files/81363622.png">
+<meta property="og:image" content="http://yoursite.com/uploads/Fast-Slow%20Recurrent%20Neural%20Network_files/81344178.png">
+<meta property="og:image" content="http://yoursite.com/uploads/Fast-Slow%20Recurrent%20Neural%20Network_files/4247105.png">
+<meta property="og:image" content="http://yoursite.com/uploads/Fast-Slow%20Recurrent%20Neural%20Network_files/31567914.png">
+<meta property="og:image" content="http://yoursite.com/uploads/Fast-Slow%20Recurrent%20Neural%20Network_files/3222552.png">
+<meta property="og:image" content="http://yoursite.com/uploads/Fast-Slow%20Recurrent%20Neural%20Network_files/3243405.png">
+<meta property="og:image" content="http://yoursite.com/uploads/Fast-Slow%20Recurrent%20Neural%20Network_files/4465323.png">
+<meta property="og:image" content="http://yoursite.com/uploads/Fast-Slow%20Recurrent%20Neural%20Network_files/4768940.png">
+<meta property="og:updated_time" content="2018-06-28T16:15:02.858Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【论文研读】Fast-Slow Recurrent Neural Network">
+<meta name="twitter:description" content="摘要&amp;emsp;&amp;emsp;处理可变长度的连续数据是广泛应用中的主要挑战，例如语音识别，语言建模，生成图像建模和机器翻译。在这里，我们通过提出一种新颖的递归神经网络（RNN）架构Fast-Slow RNN（FS-RNN）来解决这个挑战。 FS-RNN结合了多尺度RNN和深度转换RNN的优势，因为它处理不同时间尺度的连续数据，并从一个时间步到下一个时间步学习复杂的转换函数。我们在两个字符级别的语言建">
+<meta name="twitter:image" content="http://yoursite.com/uploads/Fast-Slow%20Recurrent%20Neural%20Network_files/49664996.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/29/Fast-Slow Recurrent Neural Network/"/>
+
+
+
+
+
+  <title>【论文研读】Fast-Slow Recurrent Neural Network | AdamRain的心路历程</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AdamRain的心路历程</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">苦逼博士僧</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/29/Fast-Slow Recurrent Neural Network/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Adam Rain">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AdamRain的心路历程">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【论文研读】Fast-Slow Recurrent Neural Network</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-29T00:14:21+08:00">
+                2018-06-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/论文研读笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">论文研读笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                  <span class="post-meta-divider">|</span>
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计</span>
+                
+                <span title="字数统计">
+                  6,281
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  23
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p>&emsp;&emsp;处理可变长度的连续数据是广泛应用中的主要挑战，例如语音识别，语言建模，生成图像建模和机器翻译。在这里，我们通过提出一种新颖的递归神经网络（RNN）架构Fast-Slow RNN（FS-RNN）来解决这个挑战。 FS-RNN结合了多尺度RNN和深度转换RNN的优势，因为它处理不同时间尺度的连续数据，并从一个时间步到下一个时间步学习复杂的转换函数。我们在两个字符级别的语言建模数据集Penn Treebank和Hutter Prize Wikipedia上评估FS-RNN，其中我们分别将最新结果的状态改进为1.19和1.25位每字符（BPC）。另外，两个FS-RNN的集合在Hutter Prize维基百科上达到1.20个BPC(Bits-per-character)，优于BPC测量方面的最佳已知压缩算法。我们还对FS-RNN的学习和网络动态进行了实证研究，这解释了与其他RNN架构相比改进的性能。我们的方法是通用的，因为任何类型的RNN cell都是FS-RNN架构的可能构建模块，因此可以灵活应用于不同的任务。<br><a id="more"></a></p>
+<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>&emsp;&emsp;处理，建模和预测变长序列数据是机器学习领域的主要挑战。近年来，递归神经网络（RNNs）一直是应对这一挑战的最受欢迎的工具。 RNN已成功应用于改善语言建模和语音识别等复杂任务中的最先进结果。一种流行的RNN变体是长期短期记忆（LSTMs），它们已经被提出来解决消失梯度问题。 LSTM保持恒定的错误流量，因此比标准RNN更适合学习长期依赖性。<br>&emsp;&emsp;我们的工作有助于就如何将多个RNN cell互连以促进长期依赖性的学习，有利于信息的高效分层表示，利用深层浅层网络的计算优势以及提高计算效率的培训和测试。在深RNN架构中，RNN或LSTM层叠在一起。附加层使网络能够学习复杂的输入到输出关系，并促进信息的有效分层表示。在多尺度RNN体系结构中，不同时间尺度上的操作通过较低频率更新较高层来实施，这进一步促进了信息的有效分层表示。较高层的更新速率较慢导致计算效率较高的实现，并产生了有利于长期依赖关系学习的短梯度路径。在深转换RNN架构中，为了增加从一个时间步到另一个时间步的转换函数的深度，例如在深度转换网络[30]或复发高速公路网络（ RHN）[42]。中间层使网络能够学习复杂的非线性过渡函数。因此，该模型利用了这样一个事实，即深层模型可以比浅层模型更有效地表示一些函数[4]。我们将这些网络解释为分享隐藏状态的浅层网络，而不是单一的深层网络。尽管在实践中是相同的，但这种解释使得通过顺序连接这些小区将任何RNN小区转换为深RNN很简单，参见图2b。<br>在这里，我们提出快速慢RNN（FS-RNN）架构，这是一种互连RNN小区的新方法，它结合了多尺度RNN和深度过渡RNN的优点。在最简单的形式中，该体系结构由两个顺序连接的快速操作的RNN小区和较低层级中的慢速操作RNN小区组成，参见图1和第3节。我们评估两个标准字符的FS-RNN （Penn Treebank和Hutter Prize Wikipedia）。此外，在[30]之后，我们提出了一个经验分析，揭示了FS-RNN架构优于其他RNN架构的优势。</p>
+<h3 id="本文的主要贡献是："><a href="#本文的主要贡献是：" class="headerlink" title="本文的主要贡献是："></a>本文的主要贡献是：</h3><p>• 我们提出FS-RNN作为一种新颖的RNN架构。<br>• 我们改进了Penn Treebank和Hutter Prize维基百科数据集的最新成果。<br>• 我们通过使用两个FS-RNN的集合，超越了在Hutter Prize Wikipedia上评估的最着名的文本压缩算法的BPC性能。<br>• 我们凭经验证明FS-RNN融合了多尺度RNN和深度转换RNN的优势，因为它有效存储长期相关性，并快速适应意外输入。<br>• 我们通过以下URL <a href="https://github.com/amujika/Fast-Slow-LSTM提供我们的代码。" target="_blank" rel="external">https://github.com/amujika/Fast-Slow-LSTM提供我们的代码。</a></p>
+<h3 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h3><p>&emsp;&emsp;在下文中，我们将更详细地回顾与我们的方法相关的工作。首先，我们关注深度转换RNN和多尺度RNN，因为这两种架构是FS-RNN架构的主要灵感来源。然后，我们讨论我们的方法与这两种体系结构的不同之处。最后，我们回顾了处理顺序数据时解决长期依赖关系问题的其他方法。<br>&emsp;&emsp;帕斯卡努等人[30]研究了RNN如何转换为深RNN。在标准RNN中，从一个隐藏状态到下一个隐藏状态的转换函数很浅，也就是说，该函数可以写成一个线性变换，并与点非线性连接。作者增加了中间层来增加转换函数的深度，他们凭经验发现，这种更深的架构提升了性能。由于更深的架构更难以训练，因此他们为网络配备了跳跃连接，这会产生较短的梯度路径（DT(S)-RNN，参见[30]）。经过类似的研究，Zilly等人[42]进一步增加了两个连续隐藏状态之间的转换深度。他们使用高速层[37]来解决训练深层架构的问题。由此产生的RHN [42]在Penn Treebank和Hutter奖维基百科数据集上获得了最先进的结果。此外，在自适应计算中可以看到与深转换网络的模糊相似性[12]，其中LSTM单元在接收到输入以产生下一个输出之后，学习它应该更新其状态的次数。<br>&emsp;&emsp;多尺度RNN通过将多个RNN以更新频率递减的顺序堆叠在彼此之上来获得。早期的尝试提出了这种用于顺序数据压缩的体系结构[34]，其中较高层仅在较低层的预测误差的情况下被更新，而序列分类[9]（其中较高层以较小的固定频率被更新）。最近，Koutnik等人[24]提出了clockwork RNN，其中隐藏单元分为几个模块，其中第$i$个模块每$2^i$次更新一次。这种多尺度RNN架构的一般优点是提高了计算效率，有效地传播了长期依赖关系，并灵活地将资源（单元）分配给分级层。多尺度RNN已经被应用于文献[3]中的语音识别，其中较慢的运行RNN随时间汇集信息并且时标是固定的超参数，如在发条RNN中。在[35]中，多尺度RNN被应用来产生上下文感知查询建议。在这种情况下，提供了显式的分层边界信息。 Chung等人[6]提出了一个层次多尺度RNN（HM-RNN），它发现了序列的潜在层次结构，而没有明确给出边界信息。如果一个参数化边界检测器指示一个段的结束，那么该段的汇总表示被送到上层，下层的状态被重置[6]。<br>&emsp;&emsp;我们的FS-RNN架构借鉴了来自深度转换RNN和多尺度RNN的元素。多尺度RNN的主要区别在于，我们的较低层次及时缩放，也就是说，它的运行速度比输入序列自然给出的时间尺度更快。与深度转型RNNs的主要区别在于我们促进长期依赖性的方法，即我们采用在慢时间尺度上运行的RNN。<br>&emsp;&emsp;许多方法旨在解决在顺序数据中学习长期依赖性的问题。一个非常流行的方法是使用外部存储器单元，可以通过网络访问和修改，参见Neural Turing Machines [13]，Memory Networks [39]和Differentiable Neural Computer [14]。其他方法专注于不同的优化技术，而不是网络架构。一种尝试是Hessian Free优化[28]，这是一种在RNN上取得良好结果的二阶训练方法。使用不同的优化技术可以改善广泛的RNN体系结构的学习，因此，FS-RNN也可以从中受益。</p>
+<h3 id="Fast-Slow-RNN"><a href="#Fast-Slow-RNN" class="headerlink" title="Fast-Slow RNN"></a>Fast-Slow RNN</h3><p><center><img src="/uploads/Fast-Slow Recurrent Neural Network_files/49664996.png"></center></p>
+<p><center>图1：具有$k$个快速单元的快速慢速RNN的示意图。 观察只有第二个快速单元从慢速单元接收输入。</center><br>&emsp;&emsp;我们提出了FS-RNN架构，见图1.它由较低层上由$k$个顺序连接的RNN单元$F_1,…,F_k$和较高分层上的一个RNN单元$S$组成。我们称$F_1,…,F_k$为快速单元，S是慢速单元，相应的分级层分别为快速和慢速层。 $S$从$F_1$接收输入并将其状态输入到$F_2$。 $F_1$接收顺序输入数据$x_t$，并且$F_k$输出为序列的下一个元素的预测概率分布$y_t$。<br>&emsp;&emsp;直观上，快速单元能够学习从一个时间步到下一个时间步的复杂转换函数。 Slow单元在时间上相距较远的顺序输入之间构建较短的梯度路径，因此它便于学习长期依赖性。因此，FS-RNN体系结构具有深度转换RNN和多尺度RNN的优点，请参见第2节。<br>&emsp;&emsp;由于任何种类的RNN单元都可以用作FS-RNN架构的构成单元，因此我们正式陈述任意RNN单元的FS-RNN的更新规则。我们定义一个RNN单元$Q$为一个可以将隐藏状态$h$和附加输入$x$映射到一个新的隐藏状态的可微函数$f^Q(h,x)$。请注意，$x$可以是输入数据，也可以是来自更高层或更低层的单元格的输入。如果一个单元格没有收到额外的输入，那么我们将忽略$x$。以下等式定义了给定任意RNN单元$F_1,…,F_k$和$S$的FS-RNN结构：</p>
+<script type="math/tex; mode=display">h_{t}^{F_1}=f^{F_1}\left ( h_{t-1}^{F_k},x_t \right )</script><script type="math/tex; mode=display">h_{t}^{S}=f^{S}\left ( h_{t-1}^{S},h_{t}^{F_1} \right )</script><script type="math/tex; mode=display">h_{t}^{F_2}=f^{F_2}\left ( h_{t}^{F_1},h_{t}^{S} \right )</script><script type="math/tex; mode=display">h_{t}^{F_i}=f^{F_i}\left ( h_{t}^{F_i-1} \right )\; for\, 3\leq i\leqslant k</script><p>&emsp;&emsp;输出$y_t$被计算为$h_{t}^{F_t}$的映射变换。有可能扩展FS-RNN架构，以便通过添加分层结构来进一步促进长期依赖关系的学习，每个分层结构的运行时间比下面的时间尺度要慢，类似于clockwork RNN [24]。然而，对于第4节中所考虑的任务，我们观察到，即使应用正则化技术并降低了测试时间的性能，也会导致过度训练数据的过度拟合。因此，我们不会在本文中进一步研究该模型的扩展，尽管它可能对其他任务或更大的数据集有利。</p>
+<p>&emsp;&emsp;在第4节的实验中，我们使用LSTM单元作为FS-RNN体系结构的构建块。为了完整性，我们陈述了LSTM Q的更新函数$f^Q$。LSTM的状态是一对$\left( h_t，c_t \right)$，由隐藏状态和单元状态组成。函数$f^Q$根据下面几个公式将前一个状态和输入$\left( h_{t-1},c_{t-1},x_t \right)$映射到下一个状态$\left(h_t,c_t\right )$:</p>
+<script type="math/tex; mode=display">\begin{pmatrix} f_t\\ i_t\\ o_t\\ g_t \end{pmatrix}=W_{h}^{Q}h_{t-1}+W_{x}^{Q}x_{t}+b^{Q}</script><script type="math/tex; mode=display">c_{t}=\sigma \left ( f_t \right )\odot c_{t-1}+\sigma \left ( i_t \right )\odot tanh\left ( g_t \right )</script><script type="math/tex; mode=display">h_t=\sigma \left ( o_t \right )\odot tanh\left ( c_t \right )</script><p>其中$f_t$、$i_t$和$o_t$通常被称为遗忘，输入和输出门，$g_t$是新的候选单元状态。此外，$W_{h}^{Q},W_{x}^{Q}$和$b_Q$是可学习的参数，$\sigma$表示S形函数，⊙表示数组元素依次相乘。</p>
+<h3 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h3><p>&emsp;&emsp;对于实验，我们假设FS-LSTM是一个FS-RNN，只不过其中每个RNN单元是LSTM单元。 FS-LSTM在两个字符级别的语言模型数据集上进行评估，即Penn Treebank和Hutter PrizeWikipedia，在本节中将被称为enwik8。该任务包括预测下一个词的概率分布。 在4.1节中，我们将FS-LSTM的性能与其他方法进行比较。 在第4.2节中，我们通过实证比较了不同RNN架构的网络动态性，并展示FS-LSTM结合了深度转换RNN和多尺度RNN的优点。</p>
+<blockquote>
+<p>Penn Treebank: 该数据集是华尔街日报用英文撰写的文章的集合。它仅包含10000个不同的单词，都是小写组成，罕见词都被“<unk>”所取代。 在[29]之后，我们将数据集分解为分别由5.1M，400K和450K字符组成的训练，验证和测试集。<br>Hutter Prize Wikipedia：该数据集也称为enwik8，它由“原始”维基百科数据组成，即英文文章，表格，XML数据，超链接和特殊字符。 数据集包含100个字符，包含205个独特的标记。 在[7]之后，我们将数据集分别分为由90M，5M和5M字符组成的火车，验证和测试集。<a href="http://www.mattmahoney.net/dc/text.html" target="_blank" rel="external">http://www.mattmahoney.net/dc/text.html</a></unk></p>
+</blockquote>
+<h4 id="Penn-Treebank和Hutter-Prize-上的表现"><a href="#Penn-Treebank和Hutter-Prize-上的表现" class="headerlink" title="Penn Treebank和Hutter Prize 上的表现"></a>Penn Treebank和Hutter Prize 上的表现</h4><p><center><img src="/uploads/Fast-Slow Recurrent Neural Network_files/81363622.png"><img src="/uploads/Fast-Slow Recurrent Neural Network_files/81344178.png"></center><br>&emsp;&emsp;FS-LSTM在Penn Treebank和enwik8数据集上分别达到1.19 BPC和1.25 BPC。这些结果与表1和表2中的其他方法进行比较（没有引用的基线LSTM结果取自Penn Treebank的[43]，enwik取自[15]）。对于Penn Treebank，FS-LSTM比之前的顶级方法具有更少的参数，优于以前的所有方法。当增加模型尺寸时，我们没有观察到任何改进，可能是由于过度拟合。在enwik8数据集中，FS-LSTM超越了所有其他的神经途径。在[13]之后，我们将结果与使用BPC度量的文本压缩算法进行比较。两个FS-LSTM模型（1.20 BPC）的集合优于cmix（1.23 BPC）[23]，这是目前enwik8上最好的文本压缩算法[26]。然而，公平比较是困难的。压缩算法通常通过包含解压缩器大小的压缩数据集的最终大小来评估。对于字符预测模型，通常不考虑网络大小，并在测试集上测量性能。我们评论说，由于FSLSTM是在测试集上进行评估的，它应该在英文维基百科的任何部分都达到类似的性能。</p>
+<blockquote>
+<p>cmix是一个无损数据压缩程序，旨在以高CPU /内存使用为代价优化压缩比。<a href="http://www.byronknoll.com/cmix.html" target="_blank" rel="external">http://www.byronknoll.com/cmix.html</a></p>
+</blockquote>
+<p>&emsp;&emsp;FS-LSTM-2和FS-LSTM-4模型分别由Fast层中的两个和四个单元组成。 FS-LSTM-4型号的性能优于FS-LSTM-2型号，但其一次处理时间比FS-LSTM-2高25％。向Fast层添加更多单元可以进一步提高RHN的性能[42]，但会增加处理时间，因为单元状态是按顺序计算的。因此，我们没有进一步增加快速单元的数量。</p>
+<p><center><img src="/uploads/Fast-Slow Recurrent Neural Network_files/4247105.png"></center><br>&emsp;&emsp;训练该模型以最小化预测与训练数据之间的交叉熵损失。形式上，损失函数被定义为：$L=- \frac{1}{n}\sum _{i=1}^{n} log\; p_{\theta }\left ( x_{i}|x_{1},\cdots ,x_{i-1} \right )$，其中$p_{\theta }\left ( x_{i}|x_{1},\cdots ,x_{i-1} \right )$是具有参数$\theta$的模型赋予给定所有前面的字符的下一个字符$x_i$的概率。该模型通过BPC度量来评估，该度量在损失函数中使用二进制对数而不是自然对数。表3总结了用于实验的所有超参数。我们使用dropout对FS-LSTM进行正则化。在每个时间步中，对于非循环性连接应用一个不同的dropout的mask矩阵，并且为循环性连接应用Zoneout。该网络使用Adam优化器用minibatch梯度下降训练。如果梯度的范数大于1，则它们被归一化为1.通过时间截断的反向传播（TBPTT）用于逼近梯度，并且最终的隐藏状态被传递到下一个序列。在Penn Treebank实验中，学习率除以最后20个epoch的因子10，并且在enwik8实验中，只要两个连续epochs的验证错误没有改善，它就被系数10除。每个LSTM单元的遗忘偏差被初始化为1，并且所有的权重矩阵被初始化为正交矩阵。分层归一化[1]分别应用于单元和每个门。在测试集上评估验证错误最小的网络。</p>
+<blockquote>
+<p>dropout: 训练神经网络模型时，如果训练样本较少，为了防止模型过拟合，Dropout可以作为一种trikc供选择。Dropout是hintion最近2年提出的，源于其文章 Improving neural networks by preventing co-adaptation of feature detectors .中文大意为：通过阻止特征检测器的共同作用来提高神经网络的性能。<a href="http://blog.csdn.net/hjimce/article/details/50413257#" target="_blank" rel="external">http://blog.csdn.net/hjimce/article/details/50413257#</a><br>Zoneout:<br>Adam优化：<br>minibatch: <a href="https://www.cnblogs.com/louyihang-loves-baiyan/p/5136447.html" target="_blank" rel="external">随机梯度下降法（Stochastic gradient descent）</a>，即一次迭代只迭代一个样本。</p>
+<blockquote>
+<p>这样做的好处是显然的，但是，无法规避的，每次迭代loss function的变异就会很大，如下图：</p>
+<p><center><img src="/uploads/Fast-Slow Recurrent Neural Network_files/31567914.png"></center><br>这样，显然收敛的方向是不定的，而且，很可能收敛速度非常慢。<br>一个有效的替代方案是，每次迭代的样本数增加到一个很小的数量（通常被称为Mini-Batch），这样，有可以有效地增加收敛速度，这种方案也被称为批梯度下降法（(Mini-)Batch gradient descent）/小批量梯度下降。当Batch的数量增加时，模型的收敛速度加快，但是训练速度会降低。<br>| 类别 | 梯度下降  |  坐标下降   | 随机梯度下降/批梯度下降 |<br>|——————|—————-|————|————|<br>| 场景  |  基本场景、小数据  |  feature较多，平滑函数 |   大数据、实时训练 |<br>| 策略 |   寻找最大梯度方向，迭代 |   每次只迭代一个坐标    |每次只迭代一（k &lt; N）个样本 |<br>| 缺点   | 步长选择，在维度、样本量过大时速度较慢   | 非平缓函数失效    |收敛具有一定的随机性 |</p>
+</blockquote>
+<p>TBPTT :  <a href="http://www.colabug.com/244268.html" target="_blank" rel="external">时间截断的反向传播算法</a></p>
+<blockquote>
+<p>反向传播是用于更新神经网络中的权重的训练算法，以便将预期输出和给定输入的预测输出之间的误差最小化。<br>对于观测值之间存在顺序依赖性的序列预测问题，使用递归神经网络而不是经典的前馈神经网络。递归神经网络使用反向传播算法（Backpropagation Through Time，简称BPTT）的变体进行训练。<br>实际上，BPTT展开循环神经网络，并在整个输入序列上向后传播错误，一个时间步进行一次。然后用累加梯度更新权重。<br>对于输入序列很长的问题，BPTT可能很慢以训练回归神经网络。除了速度之外，梯度在多个时间步长上的积累可能会导致数值收缩为零，或者最终溢出或爆炸的数值增长。<br>BPTT的修改是限制后向传递中使用的时间步数，并且实际上估计用于更新权重的梯度，而不是完全计算它。<br>这种变化被称为截断反向传播时间，或TBPTT。<br>TBPTT训练算法有两个参数：<br>k1：定义向前传递中向网络显示的时间步数。<br>k2：定义在估计反向通道中的梯度时要查看的时间步数。<br>因此，当考虑如何配置训练算法时，我们可以使用符号TBPTT（k1，k2），其中k1 = k2 = n，其中n是经典非截断BPTT的输入序列长度。</p>
+</blockquote>
+</blockquote>
+<h4 id="不同架构的网络动态性比较"><a href="#不同架构的网络动态性比较" class="headerlink" title="不同架构的网络动态性比较"></a>不同架构的网络动态性比较</h4><p><center><img src="/uploads/Fast-Slow Recurrent Neural Network_files/3222552.png"></center><br>&emsp;&emsp;我们通过研究网络动态，比较FS-LSTM体系结构与图2所示的堆叠式LSTM和顺序式LSTM体系结构。为了进行公平比较，我们选择了所有三个模型大致相同的参数数量。 FS-LSTM由一个450单元的慢速和四个快速LSTM单元组成。堆叠LSTM由5个LSTM单元组成，每个堆叠在一起，每个单元由375个单元组成，从底部到顶部将被称为Stacked-1,…,Stacked-5。顺序LSTM由五个顺序连接的LSTM单元组成，每个单元500个单元。所有三种模型都需要大致相同的时间来处理一个时间步骤。模型在enwik8上进行20个批次的训练，使用Adam优化器[22]进行minibatch梯度下降，没有任何正则化，但是层归一化[1]应用于LSTM的单元状态。超参数没有针对三种模型中的任何一种进行优化。<br>&emsp;&emsp;实验表明FS-LSTM体系结构有利于长期依赖性的学习（图3），强化隐藏单元状态以不同速率改变（图4），并有助于快速适应意外输入（图5）。此外，FS-LSTM达到1.49 BPC，并且优于堆叠式LSTM（1.61 BPC）和顺序式LSTM（1.58 BPC）。</p>
+<p><center><img src="/uploads/Fast-Slow Recurrent Neural Network_files/3243405.png"></center></p>
+<p><center>图3：单元状态对损失函数的长期影响。 绘制出三个RNN体系结构中$\left \| \frac{\partial L_{t}}{\partial c_{t-k}} \right \|$的平均值在不同的k值下的变化，
+该平均值是时间t-k处单元状态对时间t处损失函数的影响。 对于顺序-LSTM结构，只考虑第一个单元。</center><br>&emsp;&emsp;在图3中，我们通过研究单元状态对晚期时间点损失的影响来评估捕获长期相关性的能力，见[2]。我们测量时间t-k处的单元状态对时间t处的损失的影响由梯度k @ Lt @ ct-kk。这个梯度对于慢速LSTM来说是最大的，并且随着快速LSTM的k增加而变小并且急剧衰减。显然，慢速单元捕捉长期依赖性，而快速单元仅存储短期信息。在堆叠LSTM中，从顶层到底层的梯度减小，这可以通过消失梯度问题来解释。序列LSTM的小而急剧衰减的梯度表明，与其他两种模型相比，它学习长期依赖的能力较差。</p>
+<p><center><img src="/uploads/Fast-Slow Recurrent Neural Network_files/4465323.png"></center></p>
+<p><center>图4：从一个时间步到另一个时间步的单元状态的变化率。 我们绘制了$\frac{1}{n}\sum_{i=1}^{n}\left ( c_{t,i}-c_{t-1,i} \right )^{2}$在所有时间步的平均值，
+其中$c_{t,i}$是三个RNN体系结构中不同层的第i个单位在时间步t的值。 对于顺序-LSTM，只考虑第一个单元.</center><br>&emsp;&emsp;图4给出了进一步的证据，表明FS-LSTM能够在Slow LSTM单元中有效地存储长期依赖关系。它表明，在三个RNN体系结构的所有层中，Slow LSTM的单元状态从一个时间步到另一个时间步的变化最小。对于快速LSTM单元跟随的顺序模型的单元观察到最高的变化。</p>
+<p><center><img src="/uploads/Fast-Slow Recurrent Neural Network_files/4768940.png"></center></p>
+<p><center>图5：每个字符位置的每个字符的位数。 左图显示测试集中每个字符位置的平均每位字符数。 右图显示了每个字符位置的堆叠LSTM的平均相对损失。
+一个单词被认为是一个在两个空格之间至少有两个长度的小写字母序列。</center><br>&emsp;&emsp;在图5中，我们调查FS-LSTM是否能够快速适应意外字符，即它是否在后续字符上表现良好。在文本建模中，一个单词的初始字符熵最高，而后面的单词通常较不明确[10]。由于单词的第一个字是最难预测的，因此以下位置的表现应反映适应意外投入的能力。虽然所有三个模型的第一个位置的预测质量相当接近，但FS-LSTM在随后的位置上显着优于叠加LSTM和顺序LSTM。快速层中可能会将新信息快速并入，因为它仅存储短期信息，请参见图3。</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>&emsp;&emsp;在本文中，我们提出了FS-RNN体系结构。据我们所知，它是第一个融合了多尺度和深度转换RNN思想的体系结构。 FS-RNN体系结构改进了在Penn Treebank和Hutter Prize维基百科数据集上评估的字符级语言建模的最新结果。两个FS-RNN的集合实现比最知名的压缩算法更好的BPC性能。进一步的实验提供了证据表明，<font color="red">慢速单元使网络能够学习长期相关性，而快速单元使网络能够快速适应意外的输入并学习从一个时间步到下一个时间步的复杂转换功能。</font><br>&emsp;&emsp;我们的FS-RNN架构为连接RNN单元提供了一个通用框架，因为任何类型的RNN单元都可以用作构建模块。因此，将体系结构应用于不同的任务具有很大的灵活性。例如使用具有良好长期记忆的RNN单元，如EURNNs [21]或NARX RNNs [25,8]，对于Slow单元可能会增强FS-RNN架构的长期记忆。因此，FS-RNN架构可能会改善许多不同应用的性能。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/时间序列/" rel="tag"># 时间序列</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/06/evidence/" rel="next" title="【论文研读】Silence is Also Evidence:Interpreting Dwell Time for Recommendation from Psychological Perspective">
+                <i class="fa fa-chevron-left"></i> 【论文研读】Silence is Also Evidence:Interpreting Dwell Time for Recommendation from Psychological Perspective
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Adam Rain" />
+          <p class="site-author-name" itemprop="name">Adam Rain</p>
+           
+              <p class="site-description motion-element" itemprop="description">记录生活科研日常</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#摘要"><span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍"><span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本文的主要贡献是："><span class="nav-text">本文的主要贡献是：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相关工作"><span class="nav-text">相关工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fast-Slow-RNN"><span class="nav-text">Fast-Slow RNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验"><span class="nav-text">实验</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Penn-Treebank和Hutter-Prize-上的表现"><span class="nav-text">Penn Treebank和Hutter Prize 上的表现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不同架构的网络动态性比较"><span class="nav-text">不同架构的网络动态性比较</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结论"><span class="nav-text">结论</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Adam Rain</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+  <script type="text/javascript"
+  color="0,0,255" opacity='0.7' zIndex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

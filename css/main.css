@@ -1519,6 +1519,9 @@ pre .javascript .function {
 .fancybox-close:hover {
   border: none;
 }
+.post-wordcount {
+  display: inline-block;
+}
 .sidebar {
   position: fixed;
   right: 0;
@@ -1676,7 +1679,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #6e7e39;
+  background: #85935d;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2766,4 +2769,11 @@ hr {
     width: auto;
     text-align: center;
   }
+}
+.post {
+  margin-top: 10px;
+  margin-bottom: 0px;
+  padding: 20px;
+  -webkit-box-shadow: 0 0 5px rgba(202,203,203,0.5);
+  -moz-box-shadow: 0 0 5px rgba(202,203,204,0.5);
 }
